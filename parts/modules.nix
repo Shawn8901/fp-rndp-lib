@@ -53,11 +53,6 @@ let
         != null) ((generatePrivateModules cfg.home-manager.private)));
 
 in {
-  flake.functions = {
-    inherit generateModule listFilesInModuleDir getFilesForModule
-      generateModules generatePrivateModules getLoadableModules
-      generateModuleName;
-  };
   flake.nixosModules = nixosModules;
   flake.flakeModules.nixos = nixosModules;
   flake.flakeModules.home-manager = home-managerModules;
