@@ -16,10 +16,10 @@ let
 
   getFilesForModule = baseDir: fileType: moduleName:
     if fileType == "directory" then
-      map (name: "${baseDir}/${moduleName}/${name}")
+      map (name: "${toString baseDir}/${moduleName}/${name}")
       (listFilesInModuleDir baseDir moduleName)
     else
-      [ "${baseDir}/${moduleName}" ];
+      [ "${toString baseDir}/${moduleName}" ];
 
   # Generates modules for all files in the given baseDir
   generateModules = baseDir:
