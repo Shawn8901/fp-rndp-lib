@@ -49,7 +49,7 @@ let
 
   generatePrivateModules =
     baseDir:
-    mapAttrs' (name: value: nameValuePair ("${cfg.privateNamePrefix}-${name}") value) (
+    mapAttrs' (name: value: nameValuePair "${cfg.privateNamePrefix}-${name}" value) (
       generateModules baseDir
     );
 
@@ -64,16 +64,18 @@ let
     (lib.optionalAttrs (cfg.nixos.public != null) generateModules cfg.nixos.public)
     // (lib.optionalAttrs (
       cfg.privateNamePrefix != null && cfg.nixos ? private && cfg.nixos.private != null
-    ) ((generatePrivateModules cfg.nixos.private)));
+    ) (generatePrivateModules cfg.nixos.private));
 
   home-managerModules =
     (lib.optionalAttrs (cfg.home-manager.public != null) generateModules cfg.home-manager.public)
     // (lib.optionalAttrs (
       cfg.privateNamePrefix != null && cfg.home-manager ? private && cfg.home-manager.private != null
-    ) ((generatePrivateModules cfg.home-manager.private)));
+    ) (generatePrivateModules cfg.home-manager.private));
 in
 {
-  flake.nixosModules = nixosModules;
-  flake.flakeModules.nixos = nixosModules;
-  flake.flakeModules.home-manager = home-managerModules;
+  flake = {
+    flakeModules.nixos = nixosModules;
+    flakeModules.home-manager = home-managerModules;
+    inherit nixosModules;
+  };
 }

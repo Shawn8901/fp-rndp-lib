@@ -40,7 +40,7 @@ let
             ;
           flakeConfig = config;
         };
-        unfreePred = pkg: elem (getName pkg) conf.unfreeSoftware;
+        allowUnfreePredicate = pkg: elem (getName pkg) conf.unfreeSoftware;
       in
       lib.nixosSystem {
         modules =
@@ -53,8 +53,8 @@ let
               networking.hostName = name;
               networking.hostId = substring 0 8 (hashString "md5" "${name}");
               system.configurationRevision = self.rev or "dirty";
-              nixpkgs.config.allowUnfreePredicate = unfreePred;
-              disabledModules = conf.disabledModules;
+              nixpkgs.config.allowUnfreePredicate = allowUnfreePredicate;
+              inherit (conf) disabledModules;
             }
 
             inputs.sops-nix.nixosModules.sops
@@ -65,7 +65,7 @@ let
           ]
           ++ lib.optionals (builtins.pathExists "${configDir}/hardware.nix") [ "${configDir}/hardware.nix" ]
           ++ (attrValues config.flake.nixosModules)
-          ++ lib.optionals (conf.setupNixRegistry) [
+          ++ lib.optionals conf.setupNixRegistry [
             {
               nix.registry = {
                 nixpkgs.flake = conf.nixpkgs;
@@ -108,7 +108,7 @@ let
                             }
                           )
                         ]
-                        ++ lib.optionals (conf.setupNixRegistry) [
+                        ++ lib.optionals conf.setupNixRegistry [
                           (
                             { config, ... }:
                             {
