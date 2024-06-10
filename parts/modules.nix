@@ -61,16 +61,16 @@ let
   generateModuleName = mapAttrs' (name: value: nameValuePair (removeSuffix ".nix" name) value);
 
   nixosModules =
-    (lib.optionalAttrs (cfg.nixos.public != null) generateModules cfg.nixos.public)
-    // (lib.optionalAttrs (
-      cfg.privateNamePrefix != null && cfg.nixos ? private && cfg.nixos.private != null
-    ) (generatePrivateModules cfg.nixos.private));
+    (lib.optionalAttrs (cfg.nixos.public != null) (generateModules cfg.nixos.public))
+    // (lib.optionalAttrs (cfg.privateNamePrefix != null && cfg.nixos.private != null) (
+      generatePrivateModules cfg.nixos.private
+    ));
 
   home-managerModules =
-    (lib.optionalAttrs (cfg.home-manager.public != null) generateModules cfg.home-manager.public)
-    // (lib.optionalAttrs (
-      cfg.privateNamePrefix != null && cfg.home-manager ? private && cfg.home-manager.private != null
-    ) (generatePrivateModules cfg.home-manager.private));
+    (lib.optionalAttrs (cfg.home-manager.public != null) (generateModules cfg.home-manager.public))
+    // (lib.optionalAttrs (cfg.privateNamePrefix != null && cfg.home-manager.private != null) (
+      generatePrivateModules cfg.home-manager.private
+    ));
 in
 {
   flake = {
