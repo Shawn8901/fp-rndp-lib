@@ -2,7 +2,8 @@
 let
   inherit (lib) mkOption types;
   inherit (flake-parts-lib) mkTransposedPerSystemModule;
-in mkTransposedPerSystemModule {
+in
+mkTransposedPerSystemModule {
   file = ./hydra-jobs.nix;
 
   name = "hydraJobs";

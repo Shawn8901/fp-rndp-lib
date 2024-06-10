@@ -8,9 +8,12 @@
     };
   };
 
-  outputs = inputs:
+  outputs =
+    inputs:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       debug = false;
-      flake = { flakeModule = ./flake-module.nix; };
+      flake = {
+        flakeModule = ./flake-module.nix;
+      };
     };
 }

@@ -1,6 +1,8 @@
 { lib, ... }:
-let inherit (lib) mkOption types literalExpression;
-in {
+let
+  inherit (lib) mkOption types literalExpression;
+in
+{
   options = {
     fp-rndp-lib = {
       root = mkOption {

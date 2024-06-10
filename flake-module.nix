@@ -10,5 +10,4 @@
     ./parts/modules.nix
     ./parts/system.nix
   ];
-
 }
