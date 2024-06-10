@@ -3,10 +3,6 @@ let
   inherit (lib) mkOption mkEnableOption types;
 
   baseConfigType = {
-    profiles = mkOption {
-      type = types.listOf types.str;
-      default = [ ];
-    };
     extraModules = mkOption {
       type = types.listOf types.unspecified;
       default = [ ];

@@ -37,7 +37,6 @@ The configuration can be extended by some options
 
 For home-manager the following options are setable
 
-- profiles - List of string names of profiles to compose and load
 - extraModules - extra modules to load
 - disabledModules - modules to disable from home manager
 
