@@ -1,6 +1,6 @@
 { inputs, lib, ... }:
 let
-  inherit (lib) mkOption mkEnableOption types;
+  inherit (lib) mkOption types;
 
   baseConfigType = {
     extraModules = mkOption {
@@ -27,11 +27,6 @@ in
                 nixpkgs = mkOption {
                   type = types.unspecified;
                   default = inputs.nixpkgs;
-                };
-                setupNixRegistry = mkOption {
-                  default = true;
-                  type = types.bool;
-                  description = "setup nix registry and nix path";
                 };
                 hostPlatform.system = mkOption {
                   type = types.str; # Is there a type def for system?

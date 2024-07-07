@@ -65,16 +65,6 @@ let
           ]
           ++ lib.optionals (builtins.pathExists "${configDir}/hardware.nix") [ "${configDir}/hardware.nix" ]
           ++ (attrValues config.flake.nixosModules)
-          ++ lib.optionals conf.setupNixRegistry [
-            {
-              nix.registry = {
-                nixpkgs.flake = conf.nixpkgs;
-                nixos-config.flake = inputs.self;
-              };
-              environment.etc."nix/inputs/nixpkgs".source = conf.nixpkgs.outPath;
-              nix.nixPath = [ "nixpkgs=/etc/nix/inputs/nixpkgs" ];
-            }
-          ]
           ++ conf.extraModules
           ++ lib.optionals (conf.home-manager != { } && conf.hmInput != null) [
             conf.hmInput.nixosModule
@@ -94,30 +84,19 @@ let
                       user = config.users.users.${name};
                     in
                     {
-                      imports =
-                        [
-                          (
-                            { config, ... }:
-                            {
-                              sops = {
-                                age.keyFile = "${config.xdg.configHome}/sops/age/keys.txt";
-                                defaultSopsFile = "${configDir}/secrets-home.yaml";
-                                defaultSymlinkPath = "/run/user/${toString user.uid}/secrets";
-                                defaultSecretsMountPoint = "/run/user/${toString user.uid}/secrets.d";
-                              };
-                            }
-                          )
-                        ]
-                        ++ lib.optionals conf.setupNixRegistry [
-                          (
-                            { config, ... }:
-                            {
-                              xdg.configFile."nix/inputs/nixpkgs".source = conf.nixpkgs.outPath;
-                              home.sessionVariables.NIX_PATH = "nixpkgs=${config.xdg.configHome}/nix/inputs/nixpkgs\${NIX_PATH:+:$NIX_PATH}";
-                            }
-                          )
-                        ]
-                        ++ lib.optionals (builtins.pathExists "${configDir}/home.nix") [ "${configDir}/home.nix" ];
+                      imports = [
+                        (
+                          { config, ... }:
+                          {
+                            sops = {
+                              age.keyFile = "${config.xdg.configHome}/sops/age/keys.txt";
+                              defaultSopsFile = "${configDir}/secrets-home.yaml";
+                              defaultSymlinkPath = "/run/user/${toString user.uid}/secrets";
+                              defaultSecretsMountPoint = "/run/user/${toString user.uid}/secrets.d";
+                            };
+                          }
+                        )
+                      ] ++ lib.optionals (builtins.pathExists "${configDir}/home.nix") [ "${configDir}/home.nix" ];
                     }
                   ) conf.home-manager;
                 };

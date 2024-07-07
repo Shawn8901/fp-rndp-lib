@@ -27,7 +27,6 @@ config.fp-rndp-lib.nixosConfigurations = {
 The configuration can be extended by some options
 
 - nixpkgs - nixpkgs to use for that host
-- setupNixRegistry - boolean flag, if the flake should be setup in nix registry
 - hostPlatform.system - system for the config defaults x86-64 (other arch like aarch64 or skylake)
 - unfreeSoftware - list of unfree software
 - hmInput - Home Manager input to use, defaults to null to not use HM

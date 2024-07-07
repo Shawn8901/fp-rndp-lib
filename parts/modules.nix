@@ -8,20 +8,16 @@ let
   cfg = config.fp-rndp-lib.modules;
 
   inherit (lib)
-    filterAttrs
-    genAttrs
-    attrNames
     mapAttrs
     mapAttrs'
     nameValuePair
     removeSuffix
     ;
-  inherit (builtins) readDir;
 
   generateModule =
     modulePathes:
     moduleWithSystem (
-      perSystem@{ config }:
+      { config }:
       { ... }:
       {
         imports = modulePathes;
