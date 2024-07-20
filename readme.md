@@ -28,8 +28,6 @@ The configuration can be extended by some options
 
 - nixpkgs - nixpkgs to use for that host
 - hostPlatform.system - system for the config defaults x86-64 (other arch like aarch64 or skylake)
-- unfreeSoftware - list of unfree software
-- hmInput - Home Manager input to use, defaults to null to not use HM
 - extraModules - extra modules to load
 - disabledModules - modules to disable from nixpkgs
 - home-manager - definition for home manager
@@ -38,13 +36,16 @@ For home-manager the following options are setable
 
 - extraModules - extra modules to load
 - disabledModules - modules to disable from home manager
+- input - home-manager input to be used, should match with the nixpkgs release
+- users - list of users as string that should be created
 
 ### Expected folder structure for system configs
 
 - machines
   - `<hostname>`
-    - configuration.nix
-    - hardware.nix
+    - configuration.nix (required)
+    - hardware.nix (optional, auto loaded if existing and may contain hardware specific config)
+    - impermanence.nix (optional, auto loaded if existing should contain impernance configuration)
     - home.nix (optional, can be used when home-manager is active)
     - secret.yaml (default sops file for system)
     - secrets-home.yaml (default sops file for home manager when used)

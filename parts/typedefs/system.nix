@@ -1,7 +1,6 @@
 { inputs, lib, ... }:
 let
   inherit (lib) mkOption types;
-
   baseConfigType = {
     extraModules = mkOption {
       type = types.listOf types.unspecified;
@@ -32,21 +31,22 @@ in
                   type = types.str; # Is there a type def for system?
                   default = "x86_64-linux";
                 };
-                unfreeSoftware = mkOption {
-                  type = types.listOf types.str;
-                  default = [ ];
-                };
-                hmInput = mkOption {
-                  type = types.unspecified;
-                  default = null;
-                };
                 home-manager = mkOption {
                   default = { };
                   type = types.attrsOf (
                     types.submodule (
                       { name, config, ... }:
                       {
-                        options = baseConfigType;
+                        options = {
+                          input = mkOption {
+                            type = types.nullOr types.unspecified;
+                            default = null;
+                          };
+                          users = mkOption {
+                            type = types.listOf types.string;
+                            default = [ ];
+                          };
+                        } // baseConfigType;
                       }
                     )
                   );

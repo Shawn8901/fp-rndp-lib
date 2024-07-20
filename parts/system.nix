@@ -8,13 +8,7 @@
 }:
 let
   inherit (builtins) hashString;
-  inherit (lib)
-    getName
-    elem
-    mapAttrs
-    attrValues
-    substring
-    ;
+  inherit (lib) mapAttrs attrValues substring;
 
   cfg = config.fp-rndp-lib.nixosConfigurations;
 
@@ -40,7 +34,6 @@ let
             ;
           flakeConfig = config;
         };
-        allowUnfreePredicate = pkg: elem (getName pkg) conf.unfreeSoftware;
       in
       lib.nixosSystem {
         modules =
@@ -53,21 +46,21 @@ let
               networking.hostName = name;
               networking.hostId = substring 0 8 (hashString "md5" "${name}");
               system.configurationRevision = self.rev or "dirty";
-              nixpkgs.config.allowUnfreePredicate = allowUnfreePredicate;
               inherit (conf) disabledModules;
             }
 
             inputs.sops-nix.nixosModules.sops
             { sops.defaultSopsFile = "${configDir}/secrets.yaml"; }
-          ]
-          ++ lib.optionals (builtins.pathExists "${configDir}/configuration.nix") [
             "${configDir}/configuration.nix"
           ]
           ++ lib.optionals (builtins.pathExists "${configDir}/hardware.nix") [ "${configDir}/hardware.nix" ]
+          ++ lib.optionals (builtins.pathExists "${configDir}/impermanence.nix") [
+            "${configDir}/impermanence.nix"
+          ]
           ++ (attrValues config.flake.nixosModules)
           ++ conf.extraModules
-          ++ lib.optionals (conf.home-manager != { } && conf.hmInput != null) [
-            conf.hmInput.nixosModule
+          ++ lib.optionals (conf.home-manager ? innput && conf.home-manager.input != null) [
+            conf.home-manager.input
             (
               { config, ... }:
               {
@@ -77,9 +70,9 @@ let
                   extraSpecialArgs = extraArgs;
                   sharedModules = [
                     inputs.sops-nix.homeManagerModule
-                  ] ++ (attrValues self.flakeModules.home-manager);
-                  users = mapAttrs (
-                    name: hmConf:
+                  ] ++ (attrValues self.flakeModules.home-manager) ++ conf.home-manager.extraModules;
+                  users = map (
+                    name:
                     let
                       user = config.users.users.${name};
                     in
@@ -98,7 +91,7 @@ let
                         )
                       ] ++ lib.optionals (builtins.pathExists "${configDir}/home.nix") [ "${configDir}/home.nix" ];
                     }
-                  ) conf.home-manager;
+                  ) conf.home-manager.users;
                 };
               }
             )
