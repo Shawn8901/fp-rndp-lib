@@ -8,7 +8,12 @@
 }:
 let
   inherit (builtins) hashString;
-  inherit (lib) mapAttrs attrValues substring;
+  inherit (lib)
+    mapAttrs
+    attrValues
+    substring
+    genAttrs
+    ;
 
   cfg = config.fp-rndp-lib.nixosConfigurations;
 
@@ -59,8 +64,8 @@ let
           ]
           ++ (attrValues config.flake.nixosModules)
           ++ conf.extraModules
-          ++ lib.optionals (conf.home-manager ? innput && conf.home-manager.input != null) [
-            conf.home-manager.input
+          ++ lib.optionals (conf.home-manager.input != null) [
+            conf.home-manager.input.nixosModule
             (
               { config, ... }:
               {
@@ -71,7 +76,7 @@ let
                   sharedModules = [
                     inputs.sops-nix.homeManagerModule
                   ] ++ (attrValues self.flakeModules.home-manager) ++ conf.home-manager.extraModules;
-                  users = map (
+                  users = genAttrs conf.home-manager.users (
                     name:
                     let
                       user = config.users.users.${name};
@@ -90,8 +95,9 @@ let
                           }
                         )
                       ] ++ lib.optionals (builtins.pathExists "${configDir}/home.nix") [ "${configDir}/home.nix" ];
+
                     }
-                  ) conf.home-manager.users;
+                  );
                 };
               }
             )

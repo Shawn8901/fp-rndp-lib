@@ -31,26 +31,16 @@ in
                   type = types.str; # Is there a type def for system?
                   default = "x86_64-linux";
                 };
-                home-manager = mkOption {
-                  default = { };
-                  type = types.attrsOf (
-                    types.submodule (
-                      { name, config, ... }:
-                      {
-                        options = {
-                          input = mkOption {
-                            type = types.nullOr types.unspecified;
-                            default = null;
-                          };
-                          users = mkOption {
-                            type = types.listOf types.string;
-                            default = [ ];
-                          };
-                        } // baseConfigType;
-                      }
-                    )
-                  );
-                };
+                home-manager = {
+                  input = mkOption {
+                    type = types.nullOr types.unspecified;
+                    default = null;
+                  };
+                  users = mkOption {
+                    type = types.listOf types.string;
+                    default = [ ];
+                  };
+                } // baseConfigType;
               } // baseConfigType;
             }
           )
